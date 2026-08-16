@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Mic, Square, Volume2 } from "lucide-react";
 import { transcribeAudio } from "@/lib/api";
 
 type RecorderState = "idle" | "recording" | "transcribing" | "ready";
@@ -91,57 +92,93 @@ export default function VoiceRecorder({
     setElapsed(0);
   }
 
+  const statusLabel =
+    state === "idle" ? "Listening" :
+    state === "recording" ? `Listening • ${String(elapsed).padStart(2, "0")}s` :
+    state === "transcribing" ? "Processing your response" :
+    "Review transcript, then submit";
+
   return (
-    <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-5">
-      <div className="flex flex-wrap items-center gap-3">
-        {state !== "recording" ? (
+    <div className="space-y-4 rounded-[24px] border border-[var(--border)] bg-white p-5 shadow-[0_10px_24px_rgba(23,32,51,0.04)]">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--primary-soft)] text-[var(--primary)]">
+            <Mic className="h-4 w-4" />
+          </span>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+              Candidate response
+            </p>
+            <p className="text-sm font-medium text-[var(--foreground)]">{statusLabel}</p>
+          </div>
+        </div>
+
+        {state === "recording" ? (
           <button
             type="button"
-            onClick={startRecording}
-            disabled={disabled || submitting || state === "transcribing"}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+            onClick={stopRecording}
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--error)] px-4 py-2 text-sm font-semibold text-white"
           >
-            Record
+            <Square className="h-3.5 w-3.5 fill-current" />
+            Stop
           </button>
         ) : (
           <button
             type="button"
-            onClick={stopRecording}
-            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white"
+            onClick={startRecording}
+            disabled={disabled || submitting || state === "transcribing"}
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#009ed6] disabled:opacity-50"
           >
-            Stop
+            <Mic className="h-3.5 w-3.5" />
+            Record
           </button>
         )}
-        <p className="text-sm text-slate-600">
-          {state === "idle" && "Ready to record"}
-          {state === "recording" && `Recording… ${String(elapsed).padStart(2, "0")}s`}
-          {state === "transcribing" && "Transcribing…"}
-          {state === "ready" && "Review transcript, then submit"}
-        </p>
       </div>
 
+      {(state === "recording" || state === "transcribing") && (
+        <div className="flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--primary-soft)] px-3 py-2">
+          {[0, 1, 2, 3, 4].map((bar) => (
+            <span
+              key={bar}
+              className={`h-3 w-1.5 rounded-full ${
+                state === "recording"
+                  ? "bg-[var(--primary)] animate-pulse"
+                  : "bg-[var(--muted)]"
+              }`}
+              style={{
+                animationDelay: `${bar * 80}ms`,
+                opacity: state === "recording" ? 0.3 + bar * 0.15 : 0.5,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       <label className="block space-y-2">
-        <span className="text-sm font-medium text-slate-700">Transcribed answer</span>
+        <span className="text-sm font-medium text-[var(--foreground)]">Transcribed answer</span>
         <textarea
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}
           rows={5}
           disabled={disabled || state === "recording" || state === "transcribing"}
           placeholder="Your spoken answer will appear here. You can edit it before submitting."
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 disabled:bg-slate-50"
+          className="w-full rounded-2xl border border-[var(--border)] bg-white px-3.5 py-3 text-[15px] text-[var(--foreground)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-[var(--primary)] focus:ring-4 focus:ring-[rgba(0,171,228,0.12)] disabled:bg-[var(--primary-soft)]"
         />
       </label>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm font-medium text-[var(--error)]">{error}</p> : null}
 
-      <button
-        type="button"
-        onClick={handleSubmit}
-        disabled={disabled || submitting || !transcript.trim()}
-        className="rounded-lg border border-slate-900 px-4 py-2 text-sm font-medium text-slate-900 disabled:opacity-50"
-      >
-        {submitting ? "Submitting…" : "Submit answer"}
-      </button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={disabled || submitting || !transcript.trim()}
+          className="inline-flex items-center gap-2 rounded-xl border border-[var(--primary)] bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#009ed6] disabled:opacity-50"
+        >
+          <Volume2 className="h-3.5 w-3.5" />
+          {submitting ? "Submitting…" : "Submit answer"}
+        </button>
+      </div>
     </div>
   );
 }

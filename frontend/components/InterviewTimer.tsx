@@ -14,8 +14,17 @@ function formatTime(totalSeconds: number): string {
 export default function InterviewTimer({ remainingSeconds }: { remainingSeconds: number }) {
   const urgent = remainingSeconds <= 60;
   return (
-    <p className={`font-mono text-lg tabular-nums ${urgent ? "text-red-600" : "text-slate-900"}`}>
-      {formatTime(remainingSeconds)}
-    </p>
+    <div className="rounded-2xl border border-[var(--border)] bg-white px-4 py-3 shadow-sm">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+        Time remaining
+      </p>
+      <p
+        className={`mt-2 font-mono text-2xl font-semibold tabular-nums tracking-tight ${
+          urgent ? "text-[var(--error)]" : "text-[var(--foreground)]"
+        }`}
+      >
+        {formatTime(remainingSeconds)}
+      </p>
+    </div>
   );
 }

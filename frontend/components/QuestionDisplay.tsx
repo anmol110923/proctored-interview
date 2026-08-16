@@ -21,11 +21,15 @@ export default function QuestionDisplay({
   onStop: () => void;
 }) {
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-          Current question
-        </p>
+    <section className="rounded-[24px] border border-[var(--border)] bg-white p-6 shadow-[0_10px_24px_rgba(23,32,51,0.04)]">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+            AI Interviewer
+          </p>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">Current question</p>
+        </div>
+
         {speechSupported ? (
           <div className="flex flex-wrap items-center gap-2">
             <Button type="button" variant="outline" size="sm" onClick={onListen} disabled={!question}>
@@ -38,27 +42,36 @@ export default function QuestionDisplay({
                 Stop
               </Button>
             ) : null}
-            <label className="flex items-center gap-2 text-xs text-zinc-600">
+            <label className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--primary-soft)] px-2.5 py-1.5 text-xs text-[var(--muted-foreground)]">
               <input
                 type="checkbox"
                 checked={autoSpeak}
                 onChange={(event) => onAutoSpeakChange(event.target.checked)}
-                className="h-3.5 w-3.5 rounded border-zinc-300"
+                className="h-3.5 w-3.5 rounded border-[var(--border)] accent-[var(--primary)]"
               />
-              Auto-read questions
+              Auto-read
             </label>
           </div>
         ) : (
-          <p className="text-xs text-zinc-500">Speech is not supported in this browser.</p>
+          <p className="text-xs text-[var(--muted-foreground)]">Speech is not supported in this browser.</p>
         )}
       </div>
-      <p className="text-xl leading-relaxed text-zinc-900">
-        {question ?? "Waiting for the interviewer…"}
-      </p>
-      {speechSupported ? (
-        <p className="mt-3 text-xs text-zinc-500">
-          {isSpeaking ? "Speaking…" : autoSpeak ? "Auto-read on" : "Auto-read off"}
+
+      <div className="rounded-[20px] border border-[var(--border)] bg-[var(--primary-soft)] p-4">
+        <p className="text-[15px] leading-8 text-[var(--foreground)] sm:text-lg">
+          {question ?? "Waiting for the interviewer…"}
         </p>
+      </div>
+
+      {speechSupported ? (
+        <div className="mt-4 flex items-center gap-3 text-xs text-[var(--muted-foreground)]">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-2.5 py-1.5">
+            <span
+              className={`h-2 w-2 rounded-full ${isSpeaking ? "bg-[var(--primary)] animate-pulse" : "bg-[var(--muted)]"}`}
+            />
+            {isSpeaking ? "Interviewer is speaking" : autoSpeak ? "Auto-read enabled" : "Auto-read disabled"}
+          </span>
+        </div>
       ) : null}
     </section>
   );

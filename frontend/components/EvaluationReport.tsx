@@ -11,8 +11,8 @@ function ListSection({ title, items }: { title: string; items: string[] }) {
   if (!items.length) return null;
   return (
     <section>
-      <h3 className="mb-2 text-sm font-semibold text-zinc-900">{title}</h3>
-      <ul className="list-disc space-y-1 pl-5 text-sm text-zinc-700">
+      <h3 className="mb-2 text-sm font-semibold text-[var(--foreground)]">{title}</h3>
+      <ul className="list-disc space-y-1 pl-5 text-sm leading-7 text-[var(--muted-foreground)]">
         {items.map((item) => (
           <li key={item}>{item}</li>
         ))}
@@ -64,13 +64,15 @@ export default function EvaluationReport({ session }: { session: Session }) {
 
   return (
     <div className="space-y-8">
-      <header className="rounded-2xl border border-zinc-200 bg-white p-6">
+      <header className="rounded-[26px] border border-[var(--border)] bg-white p-6 shadow-[0_10px_24px_rgba(23,32,51,0.04)]">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
               Overall score
             </p>
-            <p className="mt-1 text-4xl font-semibold text-zinc-900">{evaluation.overall_score}</p>
+            <p className="mt-2 text-4xl font-semibold tracking-tight text-[var(--foreground)]">
+              {evaluation.overall_score}
+            </p>
           </div>
           <div className="flex gap-2">
             <Button
@@ -105,30 +107,32 @@ export default function EvaluationReport({ session }: { session: Session }) {
             </Button>
           </div>
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-zinc-700">{evaluation.final_recommendation}</p>
+        <p className="mt-4 text-sm leading-7 text-[var(--muted-foreground)]">
+          {evaluation.final_recommendation}
+        </p>
       </header>
 
       <section className="grid gap-3 sm:grid-cols-2">
         {Object.entries(evaluation.dimensions).map(([key, value]) => (
-          <article key={key} className="rounded-xl border border-zinc-200 bg-white p-4">
+          <article key={key} className="rounded-[20px] border border-[var(--border)] bg-white p-4 shadow-sm">
             <div className="mb-2 flex items-baseline justify-between gap-2">
-              <h3 className="text-sm font-semibold text-zinc-900">
+              <h3 className="text-sm font-semibold text-[var(--foreground)]">
                 {mode?.dimensions[key] ?? key}
               </h3>
-              <span className="font-mono text-sm text-zinc-700">{value.score}/10</span>
+              <span className="font-mono text-sm text-[var(--muted-foreground)]">{value.score}/10</span>
             </div>
-            <div className="mb-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
+            <div className="mb-2 h-2 overflow-hidden rounded-full bg-[var(--primary-soft)]">
               <div
-                className="h-full bg-zinc-900"
+                className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[#7ccbf2]"
                 style={{ width: `${Math.min(100, Math.max(0, value.score * 10))}%` }}
               />
             </div>
-            <p className="text-sm leading-relaxed text-zinc-600">{value.explanation}</p>
+            <p className="text-sm leading-7 text-[var(--muted-foreground)]">{value.explanation}</p>
           </article>
         ))}
       </section>
 
-      <div className="space-y-6 rounded-2xl border border-zinc-200 bg-white p-6">
+      <div className="space-y-6 rounded-[26px] border border-[var(--border)] bg-white p-6 shadow-[0_10px_24px_rgba(23,32,51,0.04)]">
         <ListSection title="Strongest areas" items={evaluation.strongest_areas} />
         <ListSection title="Weakest areas" items={evaluation.weakest_areas} />
         <ListSection title="Specific mistakes" items={evaluation.specific_mistakes} />
@@ -138,18 +142,20 @@ export default function EvaluationReport({ session }: { session: Session }) {
       </div>
 
       <Collapsible open={open} onOpenChange={setOpen}>
-        <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left text-sm font-medium">
+        <CollapsibleTrigger className="flex w-full items-center justify-between rounded-[20px] border border-[var(--border)] bg-white px-4 py-3 text-left text-sm font-medium text-[var(--foreground)] shadow-sm">
           Full transcript
           <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
         </CollapsibleTrigger>
         <CollapsibleContent>
           <ol className="mt-3 space-y-3">
             {session.turns.map((turn, index) => (
-              <li key={`${turn.timestamp}-${index}`} className="text-sm">
-                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                  {turn.role === "interviewer" ? "Interviewer" : "You"}
+              <li key={`${turn.timestamp}-${index}`} className="rounded-[16px] border border-[var(--border)] bg-white p-3 text-sm">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+                  {turn.role === "interviewer" ? "Interviewer" : "Candidate"}
                 </p>
-                <p className="whitespace-pre-wrap text-zinc-700">{turn.content}</p>
+                <p className="mt-2 whitespace-pre-wrap leading-7 text-[var(--muted-foreground)]">
+                  {turn.content}
+                </p>
               </li>
             ))}
           </ol>

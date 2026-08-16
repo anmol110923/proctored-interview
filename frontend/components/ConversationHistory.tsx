@@ -9,13 +9,17 @@ export default function ConversationHistory({ turns }: { turns: Turn[] }) {
   const [open, setOpen] = useState(false);
 
   if (turns.length === 0) {
-    return <p className="text-sm text-zinc-500">No conversation yet.</p>;
+    return (
+      <div className="rounded-[22px] border border-[var(--border)] bg-white p-5 text-sm text-[var(--muted-foreground)] shadow-sm">
+        No conversation yet.
+      </div>
+    );
   }
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left text-sm font-medium text-zinc-800">
-        Running transcript ({turns.length} turns)
+      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-[22px] border border-[var(--border)] bg-white px-4 py-3 text-left text-sm font-medium text-[var(--foreground)] shadow-sm">
+        <span>Running transcript ({turns.length} turns)</span>
         <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
       </CollapsibleTrigger>
       <CollapsibleContent>
@@ -23,16 +27,16 @@ export default function ConversationHistory({ turns }: { turns: Turn[] }) {
           {turns.map((turn, index) => (
             <li
               key={`${turn.timestamp}-${index}`}
-              className={`rounded-lg px-3 py-2 text-sm ${
+              className={`rounded-[18px] border px-3 py-3 text-sm ${
                 turn.role === "interviewer"
-                  ? "bg-zinc-100 text-zinc-800"
-                  : "border border-zinc-200 bg-white text-zinc-700"
+                  ? "border-[var(--border)] bg-[var(--primary-soft)] text-[var(--foreground)]"
+                  : "border-[var(--border)] bg-white text-[var(--foreground)]"
               }`}
             >
-              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-                {turn.role === "interviewer" ? "Interviewer" : "You"}
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+                {turn.role === "interviewer" ? "Interviewer" : "Candidate"}
               </p>
-              <p className="whitespace-pre-wrap leading-relaxed">{turn.content}</p>
+              <p className="whitespace-pre-wrap leading-7">{turn.content}</p>
             </li>
           ))}
         </ol>

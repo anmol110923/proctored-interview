@@ -24,9 +24,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-zinc-50 font-sans text-zinc-900">
+      <body className="min-h-full bg-[var(--background)] font-sans text-[var(--foreground)]">
         <SiteNav />
-        {children}
+        <div className="min-h-[calc(100vh-73px)]">{children}</div>
       </body>
     </html>
   );
